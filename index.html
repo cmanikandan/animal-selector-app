@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Animal Selector & File Upload</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .box { border: 2px solid #ccc; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        .animal-image { max-width: 200px; margin-top: 10px; }
+        .file-info { margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h3>Select an Animal:</h3>
+        <input type="checkbox" id="cat" name="animal" value="cat" onchange="selectAnimal(this)">
+        <label for="cat">Cat</label><br>
+        <input type="checkbox" id="dog" name="animal" value="dog" onchange="selectAnimal(this)">
+        <label for="dog">Dog</label><br>
+        <input type="checkbox" id="elephant" name="animal" value="elephant" onchange="selectAnimal(this)">
+        <label for="elephant">Elephant</label><br>
+        <div id="animalImage" class="animal-image" style="display:none; width:200px; height:200px; background:#f0f0f0; text-align:center; line-height:200px; font-size:60px; border-radius:8px;"></div>
+    </div>
+
+    <div class="box">
+        <h3>Upload a File:</h3>
+        <input type="file" id="fileInput" onchange="uploadFile()">
+        <div id="fileInfo" class="file-info" style="display:none;"></div>
+    </div>
+
+    <script>
+        function selectAnimal(checkbox) {
+            // Uncheck other checkboxes
+            const checkboxes = document.querySelectorAll('input[name="animal"]');
+            checkboxes.forEach(cb => {
+                if (cb !== checkbox) cb.checked = false;
+            });
+
+            const img = document.getElementById('animalImage');
+            if (checkbox.checked) {
+                const emojis = {cat: '🐱', dog: '🐶', elephant: '🐘'};
+                img.innerHTML = emojis[checkbox.value];
+                img.style.display = 'block';
+            } else {
+                img.style.display = 'none';
+            }
+        }
+
+        function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const fileInfo = document.getElementById('fileInfo');
+                if (data.error) {
+                    fileInfo.innerHTML = `Error: ${data.error}`;
+                } else {
+                    fileInfo.innerHTML = `
+                        <strong>File Name:</strong> ${data.name}<br>
+                        <strong>File Size:</strong> ${data.size} bytes<br>
+                        <strong>File Type:</strong> ${data.type}
+                    `;
+                }
+                fileInfo.style.display = 'block';
+            });
+        }
+    </script>
+</body>
+</html>
