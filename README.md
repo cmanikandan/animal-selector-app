@@ -18,8 +18,6 @@ Visit http://127.0.0.1:5000
 
 ## AWS EC2 Deployment
 
-The app is deployed on AWS EC2 at: http://54.147.156.241
-
 ### Deployment Script
 Use `deploy.sh` to set up the application on a fresh Amazon Linux 2 instance:
 
@@ -36,5 +34,5 @@ The script installs:
 
 ### SSH Access
 ```bash
-ssh -i ~/Downloads/ec2-key-2025.pem ec2-user@54.147.156.241
+ssh -i /path/to/your-key.pem ec2-user@<your-ec2-ip>
 ```
